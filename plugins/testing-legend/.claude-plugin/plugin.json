@@ -1,0 +1,8 @@
+{
+  "name": "testing-legend",
+  "version": "0.1.0",
+  "description": "Manual-QA-grade end-to-end testing: scenario planning from user stories, per-component edge-case sweeps, multi-role flows, network inspection, and reproducible bug reports with evidence. Ships Playwright browsers (desktop + mobile).",
+  "author": { "name": "Sai Shashank Anchuri" },
+  "license": "UNLICENSED",
+  "keywords": ["qa", "testing", "e2e", "playwright", "bug-report", "manual-testing"]
+}

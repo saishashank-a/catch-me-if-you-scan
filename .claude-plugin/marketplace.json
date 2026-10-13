@@ -1,0 +1,15 @@
+{
+  "name": "testing-legend",
+  "owner": {
+    "name": "Sai Shashank Anchuri"
+  },
+  "description": "QA plugins that test apps the way senior manual testers do.",
+  "plugins": [
+    {
+      "name": "testing-legend",
+      "source": "./plugins/testing-legend",
+      "description": "Senior-manual-QA-style end-to-end testing with Playwright, edge-case sweeps and evidence-backed bug reports.",
+      "version": "0.1.0"
+    }
+  ]
+}
