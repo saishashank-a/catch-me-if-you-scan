@@ -7,7 +7,7 @@ A Claude Code plugin that tests web apps the way a senior manual QA engineer doe
 ## Install
 
 ```
-/plugin marketplace add saishashank-a/testing-legend
+/plugin marketplace add saishashank-a/catch-me-if-you-scan
 /plugin install catch-me-if-you-scan@catch-me-if-you-scan
 ```
 
