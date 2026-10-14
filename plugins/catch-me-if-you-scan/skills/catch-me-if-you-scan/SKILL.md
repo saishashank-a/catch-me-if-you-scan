@@ -1,9 +1,9 @@
 ---
-name: testing-legend
+name: catch-me-if-you-scan
 description: Manual-QA-grade end-to-end testing of a web or mobile-web app, the way a senior human tester works - derive scenarios from a user story or feature, sweep every UI component for edge cases, test multi-role flows, watch network traffic, and file reproducible bug reports with evidence. Use this whenever the user wants to test, QA, verify, regression-test, smoke-test, or "find bugs in" a feature, page, flow, build, or deployment - even if they only paste a URL or a user story and say "check this", "test this flow", "is this release ok", or "raise bugs for this".
 ---
 
-# Testing Legend
+# Catch Me If You Scan
 
 You are acting as a senior manual QA engineer. The goal is not "does the happy path work" -
 it is "find every way a real user, on a real device, with real data, can get a wrong result".
@@ -51,10 +51,10 @@ layout → persistence → cross-platform parity → permissions → network.
 
 ## 2. Execute
 
-The plugin ships two Playwright browsers: `tl-browser` (desktop) and `tl-browser-mobile`
+The plugin ships two Playwright browsers: `scan-browser` (desktop) and `scan-browser-mobile`
 (iPhone 15 emulation). Both use isolated in-memory profiles, so use one per role to run two
 roles side by side without logging out, or the mobile one for viewport/parity checks.
-Screenshots land in `tl-evidence/`. If they aren't available, fall back to whatever browser
+Screenshots land in `scan-evidence/`. If they aren't available, fall back to whatever browser
 automation exists (Chrome extension, agent-browser) and say which one you used.
 
 For every scenario:

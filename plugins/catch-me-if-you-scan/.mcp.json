@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "scan-browser": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@0.0.83", "--isolated", "--caps=devtools", "--output-dir", "scan-evidence"]
+    },
+    "scan-browser-mobile": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@0.0.83", "--isolated", "--caps=devtools", "--device", "iPhone 15", "--output-dir", "scan-evidence"]
+    }
+  }
+}

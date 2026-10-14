@@ -1,5 +1,5 @@
 {
-  "name": "testing-legend",
+  "name": "catch-me-if-you-scan",
   "version": "0.1.0",
   "description": "Manual-QA-grade end-to-end testing: scenario planning from user stories, per-component edge-case sweeps, multi-role flows, network inspection, and reproducible bug reports with evidence. Ships Playwright browsers (desktop + mobile).",
   "author": { "name": "Sai Shashank Anchuri" },

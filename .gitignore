@@ -1,4 +1,6 @@
 # private research notes (employer-derived) - never publish
 testing-methodology.md
 tl-evidence/
+scan-evidence/
 .DS_Store
+.playwright-mcp/
