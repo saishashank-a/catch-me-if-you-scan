@@ -27,3 +27,7 @@ The skill asks for anything missing (environment, test accounts per role, output
 - `references/bug-report.md` – bug template with examples
 
 Only point it at apps and accounts you are authorised to test. On production it stays read-only unless you allow specific writes.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
