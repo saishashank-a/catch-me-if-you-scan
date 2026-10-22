@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan Report</title>
+<style>
+  :root {
+    --bg: #fafaf9; --card: #fff; --text: #1c1917; --muted: #78716c; --line: #e7e5e4;
+    --critical: #b91c1c; --high: #c2410c; --medium: #a16207; --low: #4d7c0f; --accent: #1d4ed8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0a09; --card: #1c1917; --text: #f5f5f4; --muted: #a8a29e; --line: #292524;
+      --critical: #f87171; --high: #fb923c; --medium: #facc15; --low: #a3e635; --accent: #60a5fa;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; overflow-wrap: anywhere; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .meta { color: var(--muted); margin: 0 0 20px; }
+  .stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .stat b { font-size: 18px; margin-right: 4px; }
+  .bug { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .bug header { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .bug h2 { font-size: 16px; margin: 0; flex: 1 1 300px; }
+  .sev { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; }
+  .sev.Critical { color: var(--critical); } .sev.High { color: var(--high); }
+  .sev.Medium { color: var(--medium); } .sev.Low { color: var(--low); }
+  .sub { color: var(--muted); font-size: 13px; margin: 4px 0 12px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 4px; }
+  ol { margin: 0; padding-left: 20px; }
+  code { font-size: 13px; overflow-wrap: anywhere; }
+  .bug img { display: block; max-width: 100%; border: 1px solid var(--line); border-radius: 6px; margin-top: 12px; cursor: zoom-in;
+           max-height: 360px; object-fit: cover; object-position: top; }
+  .actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  button { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line);
+           background: var(--bg); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-top: 16px; }
+  summary { cursor: pointer; font-weight: 600; }
+  dialog { border: 0; padding: 0; background: transparent; max-width: 95vw; }
+  dialog img { display: block; max-width: 95vw; max-height: 90vh; cursor: zoom-out; }
+  dialog::backdrop { background: rgb(0 0 0 / .7); }
+  .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg);
+           padding: 8px 14px; border-radius: 6px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<dialog id="zoom"><img alt=""></dialog>
+<div class="toast" role="status" aria-live="polite"></div>
+
+<!-- The skill replaces the JSON below. Shape: see SKILL.md §5. -->
+<script type="application/json" id="data">/*REPORT_DATA*/</script>
+<script>
+const R = JSON.parse(document.getElementById('data').textContent)
+
+// Bug text can quote the tested app's own pages, so everything goes in as text nodes.
+function h(tag, props, ...kids) {
+  const el = Object.assign(document.createElement(tag), props)
+  el.append(...kids.flat().filter((k) => k != null && k !== false))
+  return el
+}
+const list = (items) => h('ol', null, items.map((s) => h('li', { textContent: s })))
+const section = (label, ...kids) => [h('h3', { textContent: label }), ...kids]
+
+const bugMarkdown = (b) => `## ${b.id}: ${b.title}
+**Severity:** ${b.severity} · **Area:** ${b.area} · **Platform:** ${b.platform} · **Env:** ${R.env}
+
+**Steps to reproduce**
+${b.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+**Actual:** ${b.actual}
+
+**Expected:** ${b.expected}${b.network ? `\n\n**Network:** ${b.network}` : ''}`
+
+// Pasted into the user's own assistant (Claude Code, ChatGPT, Cursor...), so it stays tool-agnostic.
+const fixPrompt = (b) => `Fix this bug found during QA of ${R.app}${R.repo ? ` (repo: ${R.repo})` : ''}.
+
+${bugMarkdown(b)}
+${b.suspect ? `\nLikely location: ${b.suspect}\n` : ''}
+Please confirm the root cause in the code, make the smallest fix, add or update a test that fails without the fix, and tell me how to re-verify using the steps above.`
+
+const toast = document.querySelector('.toast')
+async function copy(text, label) {
+  await navigator.clipboard.writeText(text)
+  toast.textContent = label
+  toast.classList.add('show')
+  setTimeout(() => toast.classList.remove('show'), 1600)
+}
+
+const zoom = document.getElementById('zoom')
+zoom.addEventListener('click', () => zoom.close())
+
+const bugCard = (b) => h('article', { className: 'bug' },
+  h('header', null,
+    h('h2', { textContent: `${b.id} · ${b.title}` }),
+    h('span', { className: `sev ${b.severity}`, textContent: b.severity })),
+  h('p', { className: 'sub', textContent: `${b.area} · ${b.platform}` }),
+  section('Steps', list(b.steps)),
+  h('div', { className: 'grid' },
+    h('div', null, section('Actual', h('div', { textContent: b.actual }))),
+    h('div', null, section('Expected', h('div', { textContent: b.expected })))),
+  b.network && section('Network', h('code', { textContent: b.network })),
+  b.suspect && section('Likely location', h('code', { textContent: b.suspect })),
+  b.evidence && h('img', {
+    src: b.evidence, alt: `Screenshot for ${b.id}`, loading: 'lazy',
+    onclick: () => { zoom.querySelector('img').src = b.evidence; zoom.showModal() },
+  }),
+  h('div', { className: 'actions' },
+    h('button', { type: 'button', textContent: 'Copy bug', onclick: () => copy(bugMarkdown(b), 'Bug copied as Markdown') }),
+    h('button', { type: 'button', className: 'primary', textContent: 'Copy fix prompt',
+      onclick: () => copy(fixPrompt(b), 'Fix prompt copied. Paste it into your AI assistant') })))
+
+const fold = (label, items, open = false) => items?.length
+  ? h('details', { open }, h('summary', { textContent: `${label} (${items.length})` }), list(items))
+  : null
+
+const SEVS = ['Critical', 'High', 'Medium', 'Low']
+document.title = R.title
+document.getElementById('app').append(...[
+  h('h1', { textContent: R.title }),
+  h('p', { className: 'meta', textContent: `${R.env} · ${R.date} · ${R.platforms}` }),
+  h('div', { className: 'stats' },
+    [...SEVS.map((s) => [s, R.bugs.filter((b) => b.severity === s).length]), ['Passed', R.passed.length]]
+      .map(([label, n]) => h('span', { className: 'stat' }, h('b', { textContent: n }), label))),
+  R.bugs.map(bugCard),
+  fold('Observations', R.observations),
+  fold('Passed scenarios', R.passed),
+  fold('Not tested', R.gaps, true),
+].flat().filter(Boolean))
+</script>
+</body>
+</html>

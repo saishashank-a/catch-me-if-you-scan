@@ -100,6 +100,29 @@ If the user asked for a table, also write `bugs.csv` with columns
 `id,title,severity,area,platform,env,steps,actual,expected,evidence`.
 If they asked for tracker tickets, draft them and confirm before creating.
 
+### Visual report (default)
+
+Also build `report.html` next to the screenshots: each bug with its evidence, a **Copy bug**
+button (Markdown for any tracker) and a **Copy fix prompt** button (a ready prompt the user pastes
+into their own AI assistant: no keys, no backend).
+
+1. Write `report.json`:
+   ```json
+   { "title": "Test Report – <app>", "app": "<app>", "repo": "<path or URL, optional>",
+     "env": "<env + build>", "date": "YYYY-MM-DD", "platforms": "<browsers/viewports>",
+     "bugs": [{ "id": "BUG-1", "title": "...", "severity": "Critical|High|Medium|Low",
+                "area": "...", "platform": "...", "steps": ["..."], "actual": "...", "expected": "...",
+                "network": "<optional>", "suspect": "<optional file:line if you read the code>",
+                "evidence": "<optional screenshot filename, relative to report.html>" }],
+     "observations": ["..."], "passed": ["..."], "gaps": ["..."] }
+   ```
+   Fill `suspect` only when you've actually read the source; it's what makes the fix prompt useful.
+2. Copy `assets/report.html` from this skill and replace the `/*REPORT_DATA*/` marker with the
+   JSON, escaping every `</` as `<\/` so the data can't close the script tag.
+3. Serve the folder (`python3 -m http.server <port>` from that folder, in the background) and give
+   the user the `http://localhost:<port>/report.html` link. The clipboard needs localhost or https,
+   so the copy buttons won't work if the file is opened directly as `file://`.
+
 ## 6. Severity
 
 <!-- TODO(owner): define the severity rubric for your product. -->
@@ -112,3 +135,4 @@ data shown to users; **Medium** = functional defect with a workaround; **Low** =
 - `references/techniques.md` - cross-cutting techniques and observation habits (read before planning)
 - `references/component-sweeps.md` - per-component edge-case checklists (read while planning each screen)
 - `references/bug-report.md` - bug template with good/bad examples (read before writing bugs)
+- `assets/report.html` - visual report template (filled in §5)
