@@ -7,8 +7,8 @@ A Claude Code plugin that tests web apps the way a senior manual QA engineer doe
 ## Install
 
 ```
-/plugin marketplace add saishashank-a/catch-me-if-you-scan
-/plugin install catch-me-if-you-scan@catch-me-if-you-scan
+claude plugin marketplace add saishashank-a/catch-me-if-you-scan
+claude plugin install catch-me-if-you-scan@catch-me-if-you-scan
 ```
 
 The plugin bundles two Playwright browsers (desktop and iPhone 15 emulation). If Chromium is missing, run `npx playwright install chromium` once.
