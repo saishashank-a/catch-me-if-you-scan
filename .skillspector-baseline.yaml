@@ -1,22 +1,29 @@
 # SkillSpector baseline (static, --no-llm, scanner 2.12.0). Reviewed manually; all false positives.
-# Use: skillspector scan . --no-llm --baseline .skillspector-baseline.yaml
+# Use: skillspector scan . --no-llm --use-shipped-baseline
+# Rules match rule id + file + matched text, so unrelated edits to these files don't break them.
 version: 2
-scanner_version: 2.12.0
-rules: []
-fingerprints:
-  - hash: sha256:00535c6f37361fe84e5d5b6e8d48fb6a203d6eb67f39412ef2f183f71c13bd97
-    rule_id: RP1
-    file: README.md
-    reason: "Line 14 is a one-off `npx playwright install chromium` hint for downloading a browser, not an MCP server. The bundled MCP servers in .mcp.json are pinned (@playwright/mcp@0.0.83)."
-  - hash: sha256:f88e4da7950f5e96a23a66491102d03913ca19019f3c54d78d6346f8d1f362d2
-    rule_id: AS3
-    file: README.md
-    reason: "README 'What's inside' lists this plugin's own files. It is documentation, not enumeration of other installed skills."
-  - hash: sha256:1e66459a43505f1c3d0572cdc39d398b6ebba3862134dd495a6cd3d3f91c350d
-    rule_id: EA2
-    file: plugins/catch-me-if-you-scan/skills/catch-me-if-you-scan/SKILL.md
-    reason: "Matched 'without confirmation' in a safety rule that forbids action: stay read-only on production (no payments, deletions, messages) and never file tickets without confirmation."
-  - hash: sha256:6d08cc10863253c86911597bd8d559029105dfefe9d609cc43b904494347fdb5
-    rule_id: EA2
-    file: plugins/catch-me-if-you-scan/skills/catch-me-if-you-scan/references/bug-report.md
-    reason: "Matched 'without asking' in bug-writing guidance: a developer should be able to verify the fix without asking the reporter. Describes report quality, not agent autonomy."
+rules:
+  - id: RP1
+    path: README.md
+    message: "*npx playwright*"
+    reason: >-
+      The `npx playwright install chromium` hint downloads a browser; it is not an
+      MCP server. The bundled MCP servers in .mcp.json are pinned (@playwright/mcp@0.0.83).
+  - id: AS3
+    path: README.md
+    message: "*skills/catch-me-if-you-scan/SKILL.md*"
+    reason: >-
+      README "What's inside" lists this plugin's own files. Documentation, not
+      enumeration of other installed skills.
+  - id: EA2
+    path: plugins/catch-me-if-you-scan/skills/catch-me-if-you-scan/SKILL.md
+    message: "*without confirmation*"
+    reason: >-
+      Matched inside the safety rule that forbids action: stay read-only on production
+      (no payments, deletions, messages) and never file tickets without confirmation.
+  - id: EA2
+    path: plugins/catch-me-if-you-scan/skills/catch-me-if-you-scan/references/bug-report.md
+    message: "*without asking*"
+    reason: >-
+      Bug-writing guidance: a developer should be able to verify the fix without asking
+      the reporter. Describes report quality, not agent autonomy.
