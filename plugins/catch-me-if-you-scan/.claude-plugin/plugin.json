@@ -6,5 +6,6 @@
   "homepage": "https://github.com/saishashank-a/catch-me-if-you-scan",
   "repository": "https://github.com/saishashank-a/catch-me-if-you-scan",
   "license": "MIT",
+  "privacyPolicyUrl": "https://github.com/saishashank-a/catch-me-if-you-scan/blob/main/plugins/catch-me-if-you-scan/README.md#privacy",
   "keywords": ["qa", "testing", "e2e", "playwright", "bug-report", "manual-testing"]
 }

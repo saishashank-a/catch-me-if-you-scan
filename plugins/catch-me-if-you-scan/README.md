@@ -19,6 +19,10 @@ Only point it at apps and accounts you are authorised to test. On production it 
 
 Full docs: https://github.com/saishashank-a/catch-me-if-you-scan
 
+## Privacy
+
+The plugin has no server and collects nothing. It drives a local Playwright browser against the app you point it at, using the test accounts you supply. Everything it reads stays on your machine: page content, screenshots, network captures and reports land in `scan-evidence/` and the report folder in your project. The pages it opens can show personal data from your test environment, so use test data where you can. The skill tells Claude to keep secrets, tokens and real personal data out of bug reports. Nothing is sent to the plugin author or any third party, and there is no telemetry. Your conversation with Claude is covered by Anthropic's own privacy policy.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
